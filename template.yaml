@@ -5,7 +5,7 @@ Description: "Sample todo serverless web application"
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Runtime: nodejs12.x
+    Runtime: nodejs18.x
     Timeout: 60 
     Tracing: Active
     MemorySize: 1024 # From Lambda Power Tuner - https://lambda-power-tuning.show/#gAAAAQACAAQACMAL;Fu+DQkrxg0JplAJBPCnQQBhL0EDm+NlA;m1ZfNJtW3zSbVl81m1bfNZtWXzaaA6Q2
@@ -140,10 +140,7 @@ Resources:
       CodeUri: todo-src/getTodo
       Handler: app.getToDoItem
       Tracing: Active
-      Policies:
-        - DynamoDBReadPolicy:
-            TableName: !Ref TodoTable
-        - CloudWatchPutMetricPolicy: {}
+      Role: arn:aws:iam::903876655549:role/LabRole
       Environment:
         Variables:
           TABLE_NAME: !Ref TodoTable
@@ -166,11 +163,8 @@ Resources:
     Properties:
       CodeUri: todo-src/getAllTodo
       Handler: app.getAllToDoItem
+      Role: arn:aws:iam::903876655549:role/LabRole
       Tracing: Active
-      Policies:
-        - DynamoDBReadPolicy:
-            TableName: !Ref TodoTable
-        - CloudWatchPutMetricPolicy: {}
       Environment:
         Variables:
           TABLE_NAME: !Ref TodoTable
@@ -192,11 +186,8 @@ Resources:
       Properties:
         CodeUri: todo-src/completeTodo/
         Handler: app.completeToDoItem
+        Role: arn:aws:iam::903876655549:role/LabRole
         Tracing: Active
-        Policies:
-          - DynamoDBCrudPolicy:
-              TableName: !Ref TodoTable
-          - CloudWatchPutMetricPolicy: {}
         Environment:
           Variables:
             TABLE_NAME: !Ref TodoTable
@@ -218,11 +209,8 @@ Resources:
     Properties:
       CodeUri: todo-src/addTodo/
       Handler: app.addToDoItem
+      Role: arn:aws:iam::903876655549:role/LabRole
       Tracing: Active
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref TodoTable
-        - CloudWatchPutMetricPolicy: {}
       Environment:
         Variables:
           TABLE_NAME: !Ref TodoTable
@@ -244,11 +232,8 @@ Resources:
       Properties:
         CodeUri: todo-src/updateTodo/
         Handler: app.updateToDoItem
+        Role: arn:aws:iam::903876655549:role/LabRole
         Tracing: Active
-        Policies:
-          - DynamoDBCrudPolicy:
-              TableName: !Ref TodoTable
-          - CloudWatchPutMetricPolicy: {}
         Environment:
           Variables:
             TABLE_NAME: !Ref TodoTable
@@ -267,12 +252,9 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: todo-src/deleteTodo
+      Role: arn:aws:iam::903876655549:role/LabRole
       Handler: app.deleteToDoItem
       Tracing: Active
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref TodoTable
-        - CloudWatchPutMetricPolicy: {}
       Environment:
         Variables:
           TABLE_NAME: !Ref TodoTable
@@ -290,20 +272,20 @@ Resources:
               Authorizer: CognitoAuthorizer
 
   # This role allows API Gateway to push execution and access logs to CloudWatch logs
-  ApiGatewayPushToCloudWatchRole:
-    Type: "AWS::IAM::Role"
-    Properties:
-      Description: "Push logs to CloudWatch logs from API Gateway"
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - "apigateway.amazonaws.com"
-            Action: "sts:AssumeRole"
-      ManagedPolicyArns:
-        - !Sub "arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+  # ApiGatewayPushToCloudWatchRole:
+  #   Type: "AWS::IAM::Role"
+  #   Properties:
+  #     Description: "Push logs to CloudWatch logs from API Gateway"
+  #     AssumeRolePolicyDocument:
+  #       Version: "2012-10-17"
+  #       Statement:
+  #         - Effect: Allow
+  #           Principal:
+  #             Service:
+  #               - "apigateway.amazonaws.com"
+  #           Action: "sts:AssumeRole"
+  #     ManagedPolicyArns:
+  #       - !Sub "arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
 
   
   ApiAccessLogGroup:
@@ -314,26 +296,26 @@ Resources:
 
   # Amplify console hosting for static website
   # 
-  AmplifyRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - amplify.amazonaws.com
-            Action:
-              - sts:AssumeRole
-      Policies:
-        - PolicyName: Amplify
-          PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-              - Effect: Allow
-                Action: "amplify:*"
-                Resource: "*"
+  # AmplifyRole:
+  #   Type: AWS::IAM::Role
+  #   Properties:
+  #     AssumeRolePolicyDocument:
+  #       Version: 2012-10-17
+  #       Statement:
+  #         - Effect: Allow
+  #           Principal:
+  #             Service:
+  #               - amplify.amazonaws.com
+  #           Action:
+  #             - sts:AssumeRole
+  #     Policies:
+  #       - PolicyName: Amplify
+  #         PolicyDocument:
+  #           Version: 2012-10-17
+  #           Statement:
+  #             - Effect: Allow
+  #               Action: "amplify:*"
+  #               Resource: "*"
 
   AmplifyApp:
     Type: "AWS::Amplify::App"
@@ -358,7 +340,7 @@ Resources:
       Tags:
         - Key: Name
           Value: Todo
-      IAMServiceRole: !GetAtt AmplifyRole.Arn
+      IAMServiceRole: arn:aws:iam::903876655549:role/LabRole
 
   AmplifyBranch:
     Type: AWS::Amplify::Branch
