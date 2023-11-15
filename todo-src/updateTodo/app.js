@@ -28,7 +28,7 @@ const response = (statusCode, body, additionalHeaders) => ({
   },
 });
 
-function isValidRequest(event) {
+function isValidRequest(context,event) {
   let isIdValid =
     event !== null &&
     event.pathParameters !== null &&

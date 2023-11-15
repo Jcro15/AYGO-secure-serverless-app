@@ -28,7 +28,13 @@ const response = (statusCode, body, additionalHeaders) => ({
   },
 });
 
-function isValidRequest(event) {
+function isValidRequest(context, event) {
+
+  
+  console.log("EVENT JSON: " + JSON.stringify(event));
+  console.log("EVENT: " + event)
+  console.log("Path parameters: " + event.pathParameters)
+  console.log("id :( " + event.pathParameters.id)
   return (
     event !== null &&
     event.pathParameters !== null &&

@@ -149,3 +149,4 @@ Thumbs.db
 # Front end config and production build
 www/build
 .idea/
+www/package-lock.json
