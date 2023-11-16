@@ -18,7 +18,7 @@ The following change was necessary in the functions completeTodo, deleteTodo, ge
 ![Code modifications](img/codeChange.png)
 
 ### Limitations creating roles in the environment
-To make the experiment work in the test environment, it was necessary to modify the [AWS SAM template](./template.yml) provided by the lab. The roles that were being created had to be removed, and it was defined that the created lambdas should use the LabRole. Additionally, it was also necessary to remove the policies that were being added to avoid problems when creating the stack.
+To make the experiment work in the test environment, it was necessary to modify the [AWS SAM template](./template.yaml) provided by the lab. The roles that were being created had to be removed, and it was defined that the created lambdas should use the LabRole. Additionally, it was also necessary to remove the policies that were being added to avoid problems when creating the stack.
 
 ### Stack deployment :
 Once the necessary modifications were made to the template, it was possible to successfully create the stack.
